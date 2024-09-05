@@ -26,6 +26,13 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+input,
+textarea {
+  background: transparent;
+  border: 1px solid rgb(var(--foreground-rgb));
+  border-radius: 0.5rem;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
