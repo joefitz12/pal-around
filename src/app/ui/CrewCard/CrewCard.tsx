@@ -1,5 +1,4 @@
 import Link from "next/link";
-import "./index.css";
 import Image from "next/image";
 import { buildName } from "@/app/lib/utils/buildName";
 
@@ -10,8 +9,6 @@ interface Props {
 }
 
 export function CrewCard({ id, name, pals }: Props) {
-  console.log({ pals });
-
   return (
     <div className="basis-full md:basis-60 grid gap-4 border border-[rgb(var(--foreground-rgb))] rounded-lg p-3 pb-0">
       <div className="flex font-semibold -mx-3 pl-3">

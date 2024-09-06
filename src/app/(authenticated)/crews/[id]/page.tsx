@@ -2,19 +2,25 @@
 
 import { useHeaderContext } from "@/app/ui/Header/useHeaderContext";
 import { useEffect, useId, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPencil,
-  faMessage,
-  faPhone,
-} from "@fortawesome/free-solid-svg-icons";
-import Link from "next/link";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import {
+//   faPencil,
+//   faMessage,
+//   faPhone,
+// } from "@fortawesome/free-solid-svg-icons";
+// import Link from "next/link";
 import clsx from "clsx";
 import { useParams } from "next/navigation";
 import { PalList } from "@/app/ui/PalList";
 import { FoodMatrix } from "@/app/ui/FoodMatrix";
 import { DrugsAlcoholMatrix } from "@/app/ui/DrugsAlcoholMatrix/DrugsAlcoholMatrix";
-import { TablePalProfile } from "@/app/ui/TablePalProfile";
+// import { TablePalProfile } from "@/app/ui/TablePalProfile";
+import { CrewCalendar } from "@/app/ui/CrewCalendar";
+import { OverviewPalList } from "@/app/ui/OverviewPalList";
+import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMessage } from "@fortawesome/free-solid-svg-icons";
+import { OverviewCalendar } from "@/app/ui/OverviewCalendar";
 
 export default function Page() {
   const { dispatch } = useHeaderContext();
@@ -25,7 +31,19 @@ export default function Page() {
     dispatch({
       type: "SET_HEADER",
       payload: {
-        message: crew?.name,
+        message: (
+          <div className="flex gap-2 items-center w-full">
+            <h1 className="text-3xl font-semibold">{crew?.name}</h1>
+            <Link
+              href={`sms://open?addresses=${pals
+                .map((pal) => pal?.phone)
+                .join(",")}`}
+              className="flex items-center gap-1"
+            >
+              <FontAwesomeIcon icon={faMessage} />
+            </Link>
+          </div>
+        ),
       },
     });
   }, [crew, dispatch]);
@@ -42,8 +60,8 @@ export default function Page() {
 
   const navId = useId();
   const [activePage, setActivePage] = useState<
-    "overview" | "pals" | "events" | "trips" | "food" | "drugs&alcohol"
-  >("pals");
+    "overview" | "pals" | "trips" | "calendar" | "food" | "drugs&alcohol"
+  >("overview");
 
   const [pals, setPals] = useState<Pal[]>([]);
 
@@ -74,6 +92,12 @@ export default function Page() {
           Pals
         </button>
         <button
+          className={clsx(activePage === "trips" && "font-semibold")}
+          onClick={() => setActivePage("trips")}
+        >
+          Trips
+        </button>
+        <button
           className={clsx(activePage === "food" && "font-semibold")}
           onClick={() => setActivePage("food")}
         >
@@ -86,47 +110,20 @@ export default function Page() {
           Drugs & Alcohol
         </button>
         <button
-          className={clsx(activePage === "events" && "font-semibold")}
-          onClick={() => setActivePage("events")}
+          className={clsx(activePage === "calendar" && "font-semibold")}
+          onClick={() => setActivePage("calendar")}
         >
-          Events
-        </button>
-        <button
-          className={clsx(activePage === "trips" && "font-semibold")}
-          onClick={() => setActivePage("trips")}
-        >
-          Trips
+          Calendar
         </button>
       </nav>
       <section className="flex gap-4 w-full md:w-auto">
-        {/* {activePage === "account" && (
-          <form className="flex flex-col gap-3 basis-full md:basis-60">
-            <div className="flex flex-col gap-1">
-              <label>Name</label>
-              <input
-                className="py-1 px-2"
-                type="text"
-                defaultValue={self?.name}
-              />
-            </div>
-          </form>
-        )} */}
         {activePage === "overview" && (
-          <div className="flex">
-            <div className="flex flex-col gap-1">
-              <h3 className="font-semibold">Pals</h3>
-              <ol className="flex flex-col gap-1">
-                {pals.map((pal) => (
-                  <li className="flex gap-1">
-                    <Link href={`/pals/${pal.id}`}>
-                      <TablePalProfile pal={pal} displayLastName={false} />
-                    </Link>
-                  </li>
-                ))}
-              </ol>
-            </div>
+          <div className="flex gap-4 items-start w-full">
+            <OverviewCalendar pals={pals} />
+            <OverviewPalList pals={pals} />
           </div>
         )}
+        {activePage === "calendar" && <CrewCalendar pals={pals} />}
         {activePage === "drugs&alcohol" && <DrugsAlcoholMatrix pals={pals} />}
         {activePage === "food" && <FoodMatrix pals={pals} />}
         {activePage === "pals" && <PalList pals={pals} />}

@@ -1,12 +1,11 @@
 import Link from "next/link";
-import "./index.css";
 import { buildName } from "@/app/lib/utils/buildName";
 import Image from "next/image";
 import clsx from "clsx";
 
 interface Props extends Pal {
-  displayCrews: boolean;
-  displayTrips: boolean;
+  displayCrews?: boolean;
+  displayTrips?: boolean;
 }
 
 export function PalCard({
