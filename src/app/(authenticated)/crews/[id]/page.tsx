@@ -21,6 +21,7 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMessage } from "@fortawesome/free-solid-svg-icons";
 import { OverviewCalendar } from "@/app/ui/OverviewCalendar";
+import { OverviewEventList } from "@/app/ui/OverviewEventList";
 
 export default function Page() {
   const { dispatch } = useHeaderContext();
@@ -69,12 +70,24 @@ export default function Page() {
     fetch(`/api/crews/${id}/pals`)
       .then((res) => res.json())
       .then((data) => {
-        if (data.pals) {
-          console.log({ pals: data.pals });
+        if (data?.pals) {
           setPals(data.pals);
         }
       });
   }, [setPals]);
+
+  const [events, setEvents] = useState<PalEvent[]>([]);
+
+  useEffect(() => {
+    fetch(`/api/crews/${id}/events`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.events) {
+          console.log({ events: data.events });
+          setEvents(data.events);
+        }
+      });
+  }, [setEvents]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -119,11 +132,14 @@ export default function Page() {
       <section className="flex gap-4 w-full md:w-auto">
         {activePage === "overview" && (
           <div className="flex gap-4 items-start w-full">
-            <OverviewCalendar pals={pals} />
+            <OverviewEventList events={events} />
+            <OverviewCalendar pals={pals} events={events} />
             <OverviewPalList pals={pals} />
           </div>
         )}
-        {activePage === "calendar" && <CrewCalendar pals={pals} />}
+        {activePage === "calendar" && (
+          <CrewCalendar pals={pals} events={events} />
+        )}
         {activePage === "drugs&alcohol" && <DrugsAlcoholMatrix pals={pals} />}
         {activePage === "food" && <FoodMatrix pals={pals} />}
         {activePage === "pals" && <PalList pals={pals} />}

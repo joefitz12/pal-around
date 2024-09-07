@@ -27,3 +27,18 @@ type AllergyIntolerance = {
   description: string;
   severity: "severe" | "mild";
 };
+
+type PalEvent = {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  createdAt: Date;
+  lastModifiedAt: Date;
+};
+
+type Attendance = {
+  eventId: string;
+  accountId: string;
+  isAttending?: true | false | "maybe";
+};

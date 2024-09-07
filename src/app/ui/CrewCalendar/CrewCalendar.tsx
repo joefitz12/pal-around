@@ -3,11 +3,10 @@ import "./react-calendar.scss";
 
 interface Props {
   pals: Pal[];
+  events: PalEvent[];
 }
 
-export function CrewCalendar({ pals }: Props) {
-  console.log({ pals });
-
+export function CrewCalendar({ events, pals }: Props) {
   function tileContent({
     date,
     view,
@@ -68,7 +67,7 @@ export function CrewCalendar({ pals }: Props) {
 
   return (
     <Calendar
-      className="border rounded-lg grow"
+      className="crew border rounded-lg grow"
       tileContent={tileContent}
       tileClassName={tileClassName}
     />

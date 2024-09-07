@@ -1,46 +1,14 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBirthdayCake } from "@fortawesome/free-solid-svg-icons";
+import { faBirthdayCake, faCircle } from "@fortawesome/free-solid-svg-icons";
 import Calendar from "react-calendar";
 import "./react-calendar.scss";
 
 interface Props {
   pals: Pal[];
+  events: PalEvent[];
 }
 
-export function OverviewCalendar({ pals }: Props) {
-  console.log({ pals });
-
-  function tileContent({
-    date,
-    view,
-  }: {
-    date: Date;
-    view: "month" | "year" | "decade" | "century";
-  }) {
-    // console.log({ date, view });
-    const birthdays = pals
-      .filter((pal) => {
-        const birthday = new Date(pal.birthday);
-        if (["month", "week"].includes(view)) {
-          return (
-            birthday.getDate() === date.getDate() &&
-            birthday.getMonth() === date.getMonth()
-          );
-        } else if (view === "year") {
-          return birthday.getMonth() === date.getMonth();
-        }
-      })
-      .map((pal) => pal.name.first);
-    return birthdays.length > 0 ? (
-      <FontAwesomeIcon
-        icon={faBirthdayCake}
-        title={`${birthdays.join(", ")}'s Birthday${
-          birthdays.length > 1 ? "'s" : ""
-        }`}
-      />
-    ) : null;
-  }
-
+export function OverviewCalendar({ events, pals }: Props) {
   function tileClassName({
     date,
     view,
@@ -48,7 +16,9 @@ export function OverviewCalendar({ pals }: Props) {
     date: Date;
     view: "month" | "year" | "decade" | "century";
   }) {
-    // console.log({ date, view });
+    const classNames = [];
+    const today = new Date();
+
     const birthdays = pals.filter((pal) => {
       const birthday = new Date(pal.birthday);
       if (["month", "week"].includes(view)) {
@@ -60,14 +30,90 @@ export function OverviewCalendar({ pals }: Props) {
         return birthday.getMonth() === date.getMonth();
       }
     });
-    return birthdays.length > 0 ? "birthday" : "";
+    if (birthdays.length > 0) {
+      classNames.push("birthday");
+    }
+
+    // add 'current' class
+    if (
+      today.getFullYear() > date.getFullYear() ||
+      (today.getFullYear() >= date.getFullYear() &&
+        today.getMonth() > date.getMonth()) ||
+      (today.getFullYear() >= date.getFullYear() &&
+        today.getMonth() >= date.getMonth() &&
+        today.getDate() > date.getDate())
+    ) {
+      classNames.push("past");
+    }
+
+    return classNames.join(" ");
   }
 
   return (
     <Calendar
-      className="border rounded-lg max-w-96"
-      tileContent={tileContent}
+      className="overview border rounded-lg max-w-96"
+      tileContent={({ date, view }) => (
+        <TileContent date={date} view={view} pals={pals} events={events} />
+      )}
       tileClassName={tileClassName}
     />
+  );
+}
+
+function TileContent({
+  date,
+  view,
+  events: _events,
+  pals,
+}: {
+  date: Date;
+  view: "month" | "year" | "decade" | "century";
+  events: PalEvent[];
+  pals: Pal[];
+}) {
+  const birthdays = pals
+    .filter((pal) => {
+      const birthday = new Date(pal.birthday);
+      if (["month", "week"].includes(view)) {
+        return (
+          birthday.getDate() === date.getDate() &&
+          birthday.getMonth() === date.getMonth()
+        );
+      } else if (view === "year") {
+        return birthday.getMonth() === date.getMonth();
+      }
+    })
+    .map((pal) => pal.name.first);
+
+  const events = _events
+    .filter((event) => {
+      const eventDate = new Date(event.date);
+      if (["month", "week"].includes(view)) {
+        return (
+          eventDate.getDate() === date.getDate() &&
+          eventDate.getMonth() === date.getMonth()
+        );
+      }
+    })
+    .map((event) => event.title);
+
+  return (
+    <>
+      {events.length > 0 && (
+        <FontAwesomeIcon
+          className="w-2 h-2"
+          icon={faCircle}
+          title={`${events.join(", ")}`}
+        />
+      )}
+      {birthdays.length > 0 && (
+        <FontAwesomeIcon
+          icon={faBirthdayCake}
+          title={`${birthdays.join(", ")}'s Birthday${
+            birthdays.length > 1 ? "'s" : ""
+          }`}
+        />
+      )}
+    </>
   );
 }
