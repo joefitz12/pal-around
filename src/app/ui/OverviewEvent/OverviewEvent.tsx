@@ -6,7 +6,7 @@ interface Props {
 
 export function OverviewEvent({ event }: Props) {
   return (
-    <tr>
+    <tr key={event.id}>
       <td>{event.title}</td>
       <td>{DateTime.fromISO(event.date).toFormat("LLL d")}</td>
     </tr>

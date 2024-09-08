@@ -2,13 +2,6 @@
 
 import { useHeaderContext } from "@/app/ui/Header/useHeaderContext";
 import { useEffect, useId, useState } from "react";
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import {
-//   faPencil,
-//   faMessage,
-//   faPhone,
-// } from "@fortawesome/free-solid-svg-icons";
-// import Link from "next/link";
 import clsx from "clsx";
 import { useParams } from "next/navigation";
 import { PalList } from "@/app/ui/PalList";
